@@ -1,31 +1,55 @@
 import os
 
-path = None
-selected_path = input(
+
+user_input = input(
     "Enter the full path of the folder you want to sort (Leave empty for current folder):\n"
 )
 
 
 def check_path_existence(path):
-    result = os.path.exists(path)
-    return result
+    return os.path.exists(path) and os.path.isdir(path)
 
 
-if selected_path == "":
-    path = os.getcwd()
-    print(f"sorting {path} ...")
+def create_folders(path):
+    try:
+        pdf_folder = os.makedirs(f"{path}/pdf", exist_ok=True)
+        return True
+    except PermissionError:
+        print("You don't have permission to create the directory.")
+        return False
+
+
+def sort_files(path):
+    target_dir = path
+    if not create_folders(path=target_dir):
+        return
+    print(f"sorting {target_dir} ...")
+    files_count = 0
+    for filename in os.listdir(target_dir):
+        file_path = os.path.join(target_dir, filename)
+        if filename.lower().endswith(".pdf") and os.path.isfile(file_path):
+            print(f"moving {filename} to {target_dir}/pdf...")
+            os.rename(
+                os.path.join(target_dir, filename),
+                os.path.join(target_dir, "pdf", filename),
+            )
+            files_count += 1
+    if files_count == 0:
+        print("No PDF files found in the folder.")
+    else:
+        print("===========================")
+        print("Files sorted successfully!")
+        print("Total files moved: ", files_count)
+
+
+if user_input == "":
+    target_dir = os.getcwd()
+    sort_files(target_dir)
 else:
-    while not check_path_existence(path=path):
-        selected_path = input(
-            "The directory path you have provide does not exists, please provide a full path"
+    while not check_path_existence(path=user_input):
+        user_input = input(
+            "The directory path you have provide does not exists, please provide a full path\n"
         )
     else:
-        path = selected_path
-        print(f"sorting {path} ...")
-
-print("Creating Pictures & Videos folder...")
-try:
-    pictures_folder = os.mkdir(f"{path}/Pictures")
-    videos_folder = os.mkdir(f"{path}/Videos")
-except PermissionError:
-    print("You don't have permission to create the directory.")
+        target_dir = user_input
+        sort_files(target_dir)
