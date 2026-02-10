@@ -1,9 +1,5 @@
 import os
-
-
-user_input = input(
-    "Enter the full path of the folder you want to sort (Leave empty for current folder):\n"
-)
+import shutil
 
 
 def check_path_existence(path):
@@ -12,7 +8,7 @@ def check_path_existence(path):
 
 def create_folders(path):
     try:
-        pdf_folder = os.makedirs(f"{path}/pdf", exist_ok=True)
+        os.makedirs(os.path.join(path, "pdf"), exist_ok=True)
         return True
     except PermissionError:
         print("You don't have permission to create the directory.")
@@ -28,8 +24,8 @@ def sort_files(path):
     for filename in os.listdir(target_dir):
         file_path = os.path.join(target_dir, filename)
         if filename.lower().endswith(".pdf") and os.path.isfile(file_path):
-            print(f"moving {filename} to {target_dir}/pdf...")
-            os.rename(
+            print(f"moving {filename} to {os.path.join(target_dir, 'pdf')}...")
+            shutil.move(
                 os.path.join(target_dir, filename),
                 os.path.join(target_dir, "pdf", filename),
             )
@@ -42,14 +38,23 @@ def sort_files(path):
         print("Total files moved: ", files_count)
 
 
-if user_input == "":
-    target_dir = os.getcwd()
-    sort_files(target_dir)
-else:
-    while not check_path_existence(path=user_input):
-        user_input = input(
-            "The directory path you have provide does not exists, please provide a full path\n"
-        )
+def main():
+    user_input = input(
+        "Enter the full path of the folder you want to sort (Leave empty for current folder):\n"
+    )
+
+    if user_input == "":
+        target_dir = os.getcwd()
+        sort_files(target_dir)
     else:
+        while not check_path_existence(path=user_input):
+            user_input = input(
+                "The directory path you have provided does not exist, please provide a full path\n"
+            )
         target_dir = user_input
         sort_files(target_dir)
+
+
+# 👇 This is the guard
+if __name__ == "__main__":
+    main()
