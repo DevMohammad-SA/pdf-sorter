@@ -55,6 +55,5 @@ def main():
         sort_files(target_dir)
 
 
-# 👇 This is the guard
 if __name__ == "__main__":
     main()
