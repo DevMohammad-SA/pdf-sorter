@@ -1,4 +1,4 @@
-
+# PDF Sorter
 
 A simple Python script to sort all `.pdf` files from a given folder into a dedicated `pdf` subfolder.
 
@@ -47,3 +47,8 @@ Enter the full path of the folder you want to sort (Leave empty for current fold
 ```
 
 All PDF files in `/home/user/Downloads` will be moved to `/home/user/Downloads/pdf`
+
+---
+
+### License
+This project is under [MIT](LICENSE) License.
